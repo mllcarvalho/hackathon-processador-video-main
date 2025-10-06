@@ -1,0 +1,39 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: hackathon-processador-video
+
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test_access_key
+        secret-key: test_secret_access_key
+      s3:
+        endpoint: http://localhost:4566
+        region: us-east-1
+        path-style-access-enabled: true
+      sqs:
+        endpoint: http://localhost:4566
+        listener:
+          max-number-of-messages: 1
+          concurrency: 1-1
+      sns:
+        endpoint: http://localhost:4566
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+nomeBucket: videos
+
+queue:
+  path: ingestor-videos-persistido
+  running: true
+
+sns:
+  topic-arn: arn:aws:sns:us-east-1:000000000000:processed-videos

@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  localstack:
+    image: localstack/localstack:2.1
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,sqs,dynamodb
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./localstack-data:/tmp/localstack/data"
+
+  app:
+    image: openjdk:21-slim
+    container_name: video-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - QUEUE_HOST=http://localstack:4566
+      - QUEUE_PATH=/000000000000/minha-fila
+      - QUEUE_RUNNING=true
+    depends_on:
+      - localstack
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: ["java", "-Djava.library.path=/usr/local/lib", "-jar", "target/hackathon-processador-video.jar"]
